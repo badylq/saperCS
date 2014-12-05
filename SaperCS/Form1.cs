@@ -12,11 +12,16 @@ namespace SaperCS
 {
 	public partial class Form1 : Form
 	{
-		Field field1;
+		private Game game;
 		public Form1()
 		{
 			InitializeComponent();
-			field1 = new Field(new Point(0, 0), this.Controls);
+			game = new Game(this, this.Controls);
+		}
+
+		private void Form1_SizeChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

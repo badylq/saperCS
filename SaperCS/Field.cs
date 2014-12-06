@@ -27,7 +27,8 @@ namespace SaperCS
 		}
 		private void fieldButton_Click(object sender, EventArgs e)
 		{
-			fieldButton.Enabled = false;
+			this.fieldButton.Enabled = false;
+			this.wasClicked = true;
 			if(isMine)
 			{
 				fieldButton.Text = "X";
@@ -36,9 +37,16 @@ namespace SaperCS
 			}
 			else
 			{
-				FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position);
+				FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position, 0);
 				game.onFieldClick(this, fieldClickArgs);
 			}
+		}
+
+		public void Click(int neighborsCount)
+		{
+			this.fieldButton.Enabled = false;
+			this.wasClicked = true;
+			UpdateNeighbors(neighborsCount);
 		}
 
 
@@ -75,12 +83,12 @@ namespace SaperCS
 					}
 					else
 					{
-						this.fieldButton.BackColor = Color.DarkGreen;
+						this.fieldButton.BackColor = Color.Green;
 					}
 				}
 				else
 				{
-					this.fieldButton.BackColor = Color.Blue;
+					this.fieldButton.BackColor = Color.LightBlue;
 				}
 			}
 		}
@@ -91,7 +99,7 @@ namespace SaperCS
 		private Button fieldButton;
 		private Control.ControlCollection controls;
 		private Game game;
-		private Point position;
+		public Point position { get; private set; }
 
 		#endregion
 	}

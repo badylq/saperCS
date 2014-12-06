@@ -18,6 +18,7 @@ namespace SaperCS
 			window.SizeChanged += new System.EventHandler(this.window_SizeChanged);
 			this.gameRandom = new Random();
 			this.PopulateFields(10);
+			this.neighborsToCheck = new List<Field> { };
 		}
 		public bool Run()
 		{
@@ -84,11 +85,11 @@ namespace SaperCS
 			{
 				FieldClickArgs fieldClickArgs = e as FieldClickArgs;
 				position = fieldClickArgs.position;
-				this.field[fieldClickArgs.position.X, fieldClickArgs.position.Y].UpdateNeighbors(CheckForMines(position));
+				this.field[fieldClickArgs.position.X, fieldClickArgs.position.Y].UpdateNeighbors(CheckForMines(position, true));
 			}
 		}
 
-		private int CheckForMines(Point position)
+		private int CheckForMines(Point position, bool runCheck)
 		{
 			int neighborsCounter = 0;
 			if (position.X > 0)
@@ -130,12 +131,70 @@ namespace SaperCS
 			}
 			if (position.Y < 9)
 			{
-				if (field[position.X, position.Y += 1].isMine)
+				if (field[position.X, position.Y + 1].isMine)
 					neighborsCounter += 1;
+			}
+
+			if (neighborsCounter == 0)
+			{
+				this.CheckNeighbors(position, runCheck);
 			}
 
 			return neighborsCounter;
 		}
+
+		private void CheckNeighbors(Point position, bool runCheck)
+		{
+			if (position.X > 0)
+			{
+				if (position.Y > 0)
+				{
+					if (!neighborsToCheck.Contains(field[position.X - 1, position.Y - 1]) && !field[position.X - 1, position.Y - 1].wasClicked)
+						neighborsToCheck.Add(field[position.X - 1, position.Y - 1]);
+				}
+				if (!neighborsToCheck.Contains(field[position.X - 1, position.Y]) && !field[position.X - 1, position.Y].wasClicked)
+					neighborsToCheck.Add(field[position.X - 1, position.Y]);
+				if(position.Y < 9)
+				{
+					if (!neighborsToCheck.Contains(field[position.X - 1, position.Y + 1]) && !field[position.X - 1, position.Y + 1].wasClicked)
+						neighborsToCheck.Add(field[position.X - 1, position.Y + 1]);
+				}
+			}
+
+			if (position.Y > 0)
+			{
+				if (!neighborsToCheck.Contains(field[position.X, position.Y - 1]) && !field[position.X, position.Y - 1].wasClicked)
+					neighborsToCheck.Add(field[position.X, position.Y - 1]);
+				if (position.X < 9)
+				{
+					if (!neighborsToCheck.Contains(field[position.X + 1, position.Y - 1]) && !field[position.X + 1, position.Y - 1].wasClicked)
+						neighborsToCheck.Add(field[position.X + 1, position.Y - 1]);
+				}
+			}
+
+			if (position.X < 9)
+			{
+				if (!neighborsToCheck.Contains(field[position.X + 1, position.Y]) && !field[position.X + 1, position.Y].wasClicked)
+					neighborsToCheck.Add(field[position.X + 1, position.Y]);
+				if (position.Y < 9)
+				{
+					if (!neighborsToCheck.Contains(field[position.X + 1, position.Y + 1]) && !field[position.X + 1, position.Y + 1].wasClicked)
+						neighborsToCheck.Add(field[position.X + 1, position.Y + 1]);
+				}
+			}
+			if (position.Y < 9)
+			{
+				if (!neighborsToCheck.Contains(field[position.X, position.Y + 1]) && !field[position.X, position.Y + 1].wasClicked)
+					neighborsToCheck.Add(field[position.X, position.Y + 1]);
+			}
+			
+			while (neighborsToCheck.Count() > 0 && runCheck)
+			{
+				neighborsToCheck[0].Click(this.CheckForMines(neighborsToCheck[0].position, false));
+				neighborsToCheck.RemoveAt(0);
+			}
+		}
+ 
 
 		#region Variables
 		private Control.ControlCollection controls;
@@ -144,6 +203,7 @@ namespace SaperCS
 		private Form window;
 		public EventHandler onMineExplode;
 		public EventHandler onFieldClick;
+		private List<Field> neighborsToCheck;
 
 		#endregion
 	}

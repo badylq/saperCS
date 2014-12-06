@@ -9,7 +9,7 @@ namespace SaperCS
 {
 	class FieldClickArgs : EventArgs
 	{
-		public FieldClickArgs(Point position)
+		public FieldClickArgs(Point position, int checkNeighbors)
 		{
 			this.position = position;
 		}

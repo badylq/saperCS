@@ -19,29 +19,74 @@ namespace SaperCS
 			this.fieldButton.Visible = true;
 			this.fieldButton.Text = "";
 			this.fieldButton.BackColor = SystemColors.Control;
-			this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", (fieldButton.Size.Height/3), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.fieldButton.Font = new System.Drawing.Font("Wingdings", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
 			this.fieldButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.controls = controls;
-			this.fieldButton.Click += new EventHandler(fieldButton_Click);
+			this.fieldButton.MouseUp += new MouseEventHandler(fieldButton_MouseClick);
 			this.controls.Add(this.fieldButton);
 			
 		}
-		private void fieldButton_Click(object sender, EventArgs e)
+		private void fieldButton_MouseClick(object sender, MouseEventArgs e)
 		{
-			this.fieldButton.Enabled = false;
-			this.wasClicked = true;
-			if(isMine)
+			MouseEventArgs mouseEventArgs = e as MouseEventArgs;
+			switch (mouseEventArgs.Button)
 			{
-				fieldButton.Text = "X";
-				this.fieldButton.BackColor = Color.DarkRed;
-				EventArgs args = null;
-				game.onMineExplode(this, args);
-			}
-			else
-			{
-				FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position);
-				game.onFieldClick(this, fieldClickArgs);
-			}
+				case MouseButtons.Left:
+					if (!this.wasClicked)
+					{
+						this.fieldButton.Enabled = false;
+						this.wasClicked = true;
+						if (isMine)
+						{
+							fieldButton.Text = "N";
+							this.fieldButton.BackColor = Color.DarkRed;
+							EventArgs args = null;
+							game.onMineExplode(this, args);
+						}
+						else
+						{
+							FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position);
+							game.onFieldClick(this, fieldClickArgs);
+						}
+					}
+					break;	
+				case MouseButtons.Right:
+					if (!this.wasClicked)
+					{
+						if (checkState == 0)
+						{
+							this.fieldButton.Font = new System.Drawing.Font("Wingdings", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+							fieldButton.Text = "O";
+							this.checkState = 1;
+							OnCheckArgs onCheckArgs = new OnCheckArgs(1);
+							this.onCheck(this, onCheckArgs);
+						}
+						else if (checkState == 1)
+						{
+							this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+							fieldButton.Text = "?";
+							this.checkState = 2;
+							OnCheckArgs onCheckArgs = new OnCheckArgs(2);
+							this.onCheck(this, onCheckArgs);
+						}
+						else
+						{
+							fieldButton.Text = "";
+							this.checkState = 0;
+							OnCheckArgs onCheckArgs = new OnCheckArgs(0);
+							this.onCheck(this, onCheckArgs);
+						}
+					}
+					break;
+				case MouseButtons.Middle:
+					if (!this.wasClicked)
+					{
+						MessageBox.Show("srodek");
+					}
+					break;
+				default:
+					break;
+				}
 		}
 
 		public void Click(int neighborsCount)
@@ -53,16 +98,25 @@ namespace SaperCS
 
 		public void ShowMine()
 		{
-			fieldButton.Text = "X";
+			fieldButton.Text = "M";
+			if(checkState == 1)
+				this.fieldButton.BackColor = Color.DarkGreen;
+			else
 			this.fieldButton.BackColor = Color.IndianRed;
 			this.fieldButton.Enabled = false;
 			this.wasClicked = true;
+			this.fieldButton.Font = new System.Drawing.Font("Wingdings", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
 		}
 
 
 		public void MakeThisMine()
 		{
 			isMine = true;
+		}
+
+		public void Disable()
+		{
+			this.wasClicked = true;
 		}
 
 		public void Reset()
@@ -78,7 +132,13 @@ namespace SaperCS
 		{
 			this.fieldButton.Size = new System.Drawing.Size((areaSize.Width-16) / 10, (areaSize.Height - 89) / 10);
 			this.fieldButton.Location = new Point((p.X * this.fieldButton.Size.Width), (p.Y * this.fieldButton.Size.Height + 50));
-			this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", (fieldButton.Size.Height / 3), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			if(!wasClicked || isMine)
+				if (checkState == 2)
+					this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+				else
+				this.fieldButton.Font = new System.Drawing.Font("Wingdings", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+			else
+				this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.fieldButton.Update();
 		}
 
@@ -86,6 +146,7 @@ namespace SaperCS
 		{
 			if (neighborsCount > 0)
 			{
+				this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 				this.fieldButton.Text = neighborsCount.ToString();
 				if (neighborsCount > 1)
 				{
@@ -147,6 +208,8 @@ namespace SaperCS
 		private Control.ControlCollection controls;
 		private Game game;
 		public Point position { get; private set; }
+		public int checkState { get; private set; }
+		public EventHandler onCheck;
 
 		#endregion
 	}

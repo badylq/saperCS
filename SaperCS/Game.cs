@@ -46,17 +46,7 @@ namespace SaperCS
 
 			this.minesLeftText = new Label();
 			this.minesLeftText.Location = new Point(window.Size.Width - 16 - 125, 0);
-			if (minesLeft > 9)
-				{
-					if (minesLeft > 99)
-					{
-						this.minesLeftText.Text = "Mines: " + minesLeft;
-					}
-					else
-						this.minesLeftText.Text = "Mines: 0" + minesLeft;
-				}
-				else
-					this.minesLeftText.Text = "Mines: 00" + minesLeft;
+			this.SetMinesLeftText();
 			this.minesLeftText.Size = new Size(125, 50);
 			this.minesLeftText.Font = new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.minesLeftText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -73,6 +63,7 @@ namespace SaperCS
 				{
 					p = new Point(i, ii);
 					field[i, ii] = new Field(controls, this, window.Size, p, new Point(i,ii));
+					field[i, ii].onCheck += new EventHandler(Field_Checked);
 				}
 			}
 			this.CreateMines(numberOfMines);
@@ -127,9 +118,11 @@ namespace SaperCS
 				{
 					for (int ii = 0; ii < 10; ii++)
 					{
-
+						this.field[i, ii].Disable();
 						if (this.field[i, ii].isMine && tempField != this.field[i, ii])
+						{
 							this.field[i, ii].ShowMine();
+						}
 					}
 				}
 			}
@@ -292,6 +285,56 @@ namespace SaperCS
 			}
 		}
  
+		private void SetMinesLeftText()
+		{
+			if (minesLeft >= 0)
+			{
+				this.minesLeftText.ForeColor = Color.Black;
+				if (minesLeft > 9)
+				{
+					if (minesLeft > 99)
+					{
+						this.minesLeftText.Text = "Mines:  " + minesLeft;
+					}
+					else
+						this.minesLeftText.Text = "Mines:  0" + minesLeft;
+				}
+				else
+					this.minesLeftText.Text = "Mines:  00" + minesLeft;
+			}
+			else
+			{
+				this.minesLeftText.ForeColor = Color.Red;
+				if (minesLeft < -9)
+				{
+					if (minesLeft < -99)
+					{
+						this.minesLeftText.Text = "Mines: -" + minesLeft * -1;
+					}
+					else
+						this.minesLeftText.Text = "Mines: -0" + minesLeft * -1;
+				}
+				else
+					this.minesLeftText.Text = "Mines: -00" + minesLeft * -1;
+			}
+		}
+		private void Field_Checked(object sender, EventArgs e)
+		{
+			OnCheckArgs onChechArgs = e as OnCheckArgs;
+			switch (onChechArgs.state)
+			{
+				case 1:
+					minesLeft -= 1;
+					this.SetMinesLeftText();
+					break;
+				case 2:
+					minesLeft += 1;
+					this.SetMinesLeftText();
+					break;
+				default:
+					break;
+			}
+		}
 
 		#region Variables
 		private Control.ControlCollection controls;

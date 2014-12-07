@@ -19,10 +19,12 @@ namespace SaperCS
 			this.gameRandom = new Random();
 			this.PopulateFields(20);
 			this.neighborsToCheck = new List<Field> { };
+			this.isPlaying = true;
+			this.clock = 0;
 
 			this.newGameButton = new Button();
 			this.newGameButton.Location = new Point((window.Size.Width - 16)/2 - 25, 0);
-			this.newGameButton.Name = "button1";
+			this.newGameButton.Name = "newGameButton";
 			this.newGameButton.Size = new System.Drawing.Size(50, 50);
 			this.newGameButton.TabIndex = 0;
 			this.newGameButton.Text = "oo \\__/";
@@ -30,6 +32,15 @@ namespace SaperCS
 			this.newGameButton.UseVisualStyleBackColor = true;
 			this.newGameButton.Click += new EventHandler(newGameButton_Click);
 			this.controls.Add(this.newGameButton);
+
+			this.timePassed = new Label();
+			this.timePassed.Location = new Point(0, 0);
+			this.timePassed.Name = "timePassedText";
+			this.timePassed.Size = new Size(125, 50);
+			this.timePassed.Text = "Time: 000";
+			this.timePassed.Font = new System.Drawing.Font("Microsoft Sans Serif", 16, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.timePassed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.controls.Add(this.timePassed);
 		}
 
 		private void PopulateFields(int numberOfMines)
@@ -87,6 +98,7 @@ namespace SaperCS
 		private void Mine_Explode(object sender, EventArgs e)
 		{
 			this.newGameButton.Text = "xx ___";
+			this.isPlaying = false;
 			if (sender is Field)
 			{
 				Field tempField = sender as Field;
@@ -234,6 +246,26 @@ namespace SaperCS
 				}
 			}
 			this.CreateMines(20);
+			this.isPlaying = true;
+		}
+
+		public void Ticker_Tick()
+		{
+			if (isPlaying)
+			{
+				clock += 1;
+				if (clock > 9)
+				{
+					if (clock > 99)
+					{
+						this.timePassed.Text = "Time: " + clock;
+					}
+					else
+						this.timePassed.Text = "Time: 0" + clock;
+				}
+				else
+					this.timePassed.Text = "Time: 00" + clock;
+			}
 		}
  
 
@@ -246,6 +278,9 @@ namespace SaperCS
 		public EventHandler onFieldClick;
 		private List<Field> neighborsToCheck;
 		private Button newGameButton;
+		private bool isPlaying;
+		private int clock;
+		private Label timePassed;
 
 		#endregion
 

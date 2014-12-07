@@ -23,5 +23,10 @@ namespace SaperCS
 		{
 
 		}
+
+		private void timer1_Tick(object sender, EventArgs e)
+		{
+			game.Ticker_Tick();
+		}
 	}
 }

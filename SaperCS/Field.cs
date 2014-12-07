@@ -14,10 +14,11 @@ namespace SaperCS
 			this.game = game;
 			this.position = position;
 			this.fieldButton = new Button();
-			this.fieldButton.Size = new System.Drawing.Size((areaSize.Width - 16) / 10, (areaSize.Height - 39) / 10);
-			this.fieldButton.Location = new Point((p.X * this.fieldButton.Size.Width), (p.Y * this.fieldButton.Size.Height));
+			this.fieldButton.Size = new System.Drawing.Size((areaSize.Width - 16) / 10, (areaSize.Height - 89) / 10);
+			this.fieldButton.Location = new Point((p.X * this.fieldButton.Size.Width), (p.Y * this.fieldButton.Size.Height + 50));
 			this.fieldButton.Visible = true;
 			this.fieldButton.Text = "";
+			this.fieldButton.BackColor = SystemColors.Control;
 			this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", (fieldButton.Size.Height/3), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.fieldButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.controls = controls;
@@ -32,12 +33,13 @@ namespace SaperCS
 			if(isMine)
 			{
 				fieldButton.Text = "X";
+				this.fieldButton.BackColor = Color.DarkRed;
 				EventArgs args = null;
 				game.onMineExplode(this, args);
 			}
 			else
 			{
-				FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position, 0);
+				FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position);
 				game.onFieldClick(this, fieldClickArgs);
 			}
 		}
@@ -49,16 +51,33 @@ namespace SaperCS
 			UpdateNeighbors(neighborsCount);
 		}
 
+		public void ShowMine()
+		{
+			fieldButton.Text = "X";
+			this.fieldButton.BackColor = Color.IndianRed;
+			this.fieldButton.Enabled = false;
+			this.wasClicked = true;
+		}
+
 
 		public void MakeThisMine()
 		{
 			isMine = true;
 		}
 
+		public void Reset()
+		{
+			isMine = false;
+			this.fieldButton.Enabled = true;
+			this.wasClicked = false;
+			this.fieldButton.Text = "";
+			this.fieldButton.BackColor = SystemColors.Control;
+		}
+
 		public void UpdateSize(Size areaSize, Point p)
 		{
-			this.fieldButton.Size = new System.Drawing.Size((areaSize.Width-16) / 10, (areaSize.Height - 39) / 10);
-			this.fieldButton.Location = new Point((p.X * this.fieldButton.Size.Width), (p.Y * this.fieldButton.Size.Height));
+			this.fieldButton.Size = new System.Drawing.Size((areaSize.Width-16) / 10, (areaSize.Height - 89) / 10);
+			this.fieldButton.Location = new Point((p.X * this.fieldButton.Size.Width), (p.Y * this.fieldButton.Size.Height + 50));
 			this.fieldButton.Font = new System.Drawing.Font("Microsoft Sans Serif", (fieldButton.Size.Height / 3), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.fieldButton.Update();
 		}
@@ -74,16 +93,44 @@ namespace SaperCS
 					{
 						if (neighborsCount > 3)
 						{
-							this.fieldButton.BackColor = Color.Red;
+							if (neighborsCount > 4)
+							{
+								if (neighborsCount > 5)
+								{
+									if (neighborsCount > 6)
+									{
+										if (neighborsCount > 7)
+										{
+											this.fieldButton.BackColor = Color.Orange;
+										}
+										else
+										{
+											this.fieldButton.BackColor = Color.Yellow;
+										}
+									}
+									else
+									{
+										this.fieldButton.BackColor = Color.LightYellow;
+									}
+								}
+								else
+								{
+									this.fieldButton.BackColor = Color.LightSeaGreen;
+								}
+							}
+							else
+							{
+								this.fieldButton.BackColor = Color.YellowGreen;
+							}
 						}
 						else
 						{
-							this.fieldButton.BackColor = Color.Orange;
+							this.fieldButton.BackColor = Color.LightGreen;
 						}
 					}
 					else
 					{
-						this.fieldButton.BackColor = Color.Green;
+						this.fieldButton.BackColor = Color.LightSkyBlue;
 					}
 				}
 				else

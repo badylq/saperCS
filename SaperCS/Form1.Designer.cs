@@ -34,7 +34,9 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(250, 250);
+			this.ClientSize = new System.Drawing.Size(300, 350);
+			this.MaximumSize = new System.Drawing.Size(526, 600);
+			this.MinimumSize = new System.Drawing.Size(316, 389);
 			this.Name = "Form1";
 			this.Text = "Saper";
 			this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
@@ -43,6 +45,8 @@
 		}
 
 		#endregion
+
+
 
 
 

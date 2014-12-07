@@ -17,13 +17,19 @@ namespace SaperCS
 			this.window = window;
 			window.SizeChanged += new System.EventHandler(this.window_SizeChanged);
 			this.gameRandom = new Random();
-			this.PopulateFields(10);
+			this.PopulateFields(20);
 			this.neighborsToCheck = new List<Field> { };
-		}
-		public bool Run()
-		{
-			
-			return true;
+
+			this.newGameButton = new Button();
+			this.newGameButton.Location = new Point((window.Size.Width - 16)/2 - 25, 0);
+			this.newGameButton.Name = "button1";
+			this.newGameButton.Size = new System.Drawing.Size(50, 50);
+			this.newGameButton.TabIndex = 0;
+			this.newGameButton.Text = "oo \\__/";
+			this.newGameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.newGameButton.UseVisualStyleBackColor = true;
+			this.newGameButton.Click += new EventHandler(newGameButton_Click);
+			this.controls.Add(this.newGameButton);
 		}
 
 		private void PopulateFields(int numberOfMines)
@@ -38,7 +44,11 @@ namespace SaperCS
 					field[i, ii] = new Field(controls, this, window.Size, p, new Point(i,ii));
 				}
 			}
+			this.CreateMines(numberOfMines);
+		}
 
+		private void CreateMines(int numberOfMines)
+		{
 			int createdMines = 0;
 			int randomX;
 			int randomY;
@@ -70,12 +80,26 @@ namespace SaperCS
 		private void window_SizeChanged(object sender, EventArgs e)
 		{
 			this.UpdateFieldsSize();
+			this.newGameButton.Location = new Point((window.Size.Width - 16) / 2 - 25, 0);
 			window.Update();
 		}
 
 		private void Mine_Explode(object sender, EventArgs e)
 		{
-			// Game end code
+			this.newGameButton.Text = "xx ___";
+			if (sender is Field)
+			{
+				Field tempField = sender as Field;
+				for (int i = 0; i < 10; i++)
+				{
+					for (int ii = 0; ii < 10; ii++)
+					{
+
+						if (this.field[i, ii].isMine && tempField != this.field[i, ii])
+							this.field[i, ii].ShowMine();
+					}
+				}
+			}
 		}
 
 		private void Field_Click(object sender, EventArgs e)
@@ -194,6 +218,23 @@ namespace SaperCS
 				neighborsToCheck.RemoveAt(0);
 			}
 		}
+
+		private void newGameButton_Click(object sender, EventArgs e)
+		{
+			this.NewGame();
+			this.newGameButton.Text = "oo \\__/";
+		}
+		public void NewGame()
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				for (int ii = 0; ii < 10; ii++)
+				{
+					this.field[i, ii].Reset();
+				}
+			}
+			this.CreateMines(20);
+		}
  
 
 		#region Variables
@@ -204,7 +245,9 @@ namespace SaperCS
 		public EventHandler onMineExplode;
 		public EventHandler onFieldClick;
 		private List<Field> neighborsToCheck;
+		private Button newGameButton;
 
 		#endregion
+
 	}
 }

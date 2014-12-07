@@ -9,11 +9,13 @@ namespace SaperCS
 {
 	class FieldClickArgs : EventArgs
 	{
-		public FieldClickArgs(Point position)
+		public FieldClickArgs(Point position, int state)
 		{
 			this.position = position;
+			this.state = state;
 		}
 
 		public Point position { get; private set; }
+		public int state { get; private set; }
 	}
 }

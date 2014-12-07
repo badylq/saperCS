@@ -23,6 +23,7 @@ namespace SaperCS
 			this.neighborsToCheck = new List<Field> { };
 			this.isPlaying = true;
 			this.clock = 0;
+			this.fieldsLeftUnclicked = field.Length;
 
 			this.newGameButton = new Button();
 			this.newGameButton.Location = new Point((window.Size.Width - 16)/2 - 25, 0);
@@ -126,6 +127,7 @@ namespace SaperCS
 					}
 				}
 			}
+			MessageBox.Show("You lost after playing for " + clock + "s.", "You lost");
 		}
 
 		private void Field_Click(object sender, EventArgs e)
@@ -136,6 +138,17 @@ namespace SaperCS
 				FieldClickArgs fieldClickArgs = e as FieldClickArgs;
 				position = fieldClickArgs.position;
 				this.field[fieldClickArgs.position.X, fieldClickArgs.position.Y].UpdateNeighbors(CheckForMines(position, true));
+				if (fieldClickArgs.state == 1)
+				{
+					this.minesLeft += 1;
+					this.SetMinesLeftText();
+				}
+				fieldsLeftUnclicked -= 1;
+				if(fieldsLeftUnclicked == 10)
+				{
+					isPlaying = false;
+					this.GameWon();
+				}
 			}
 		}
 
@@ -241,6 +254,12 @@ namespace SaperCS
 			while (neighborsToCheck.Count() > 0 && runCheck)
 			{
 				neighborsToCheck[0].Click(this.CheckForMines(neighborsToCheck[0].position, false));
+				fieldsLeftUnclicked -= 1;
+				if (fieldsLeftUnclicked == 10)
+				{
+					isPlaying = false;
+					this.GameWon();
+				}
 				neighborsToCheck.RemoveAt(0);
 			}
 		}
@@ -260,6 +279,7 @@ namespace SaperCS
 				}
 			}
 			this.minesLeft = this.mines;
+			this.SetMinesLeftText();
 			this.CreateMines(this.mines);
 			this.isPlaying = true;
 			this.clock = 0;
@@ -336,6 +356,12 @@ namespace SaperCS
 			}
 		}
 
+		private void GameWon()
+		{
+			MessageBox.Show("You won in " + clock + "s.", "You won");
+			this.fieldsLeftUnclicked = field.Length;
+		}
+
 		#region Variables
 		private Control.ControlCollection controls;
 		private Field[,] field;
@@ -351,6 +377,7 @@ namespace SaperCS
 		private Label minesLeftText;
 		private int mines;
 		private int minesLeft;
+		private int fieldsLeftUnclicked;
 
 		#endregion
 

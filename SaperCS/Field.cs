@@ -45,7 +45,7 @@ namespace SaperCS
 						}
 						else
 						{
-							FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position);
+							FieldClickArgs fieldClickArgs = new FieldClickArgs(this.position, this.checkState);
 							game.onFieldClick(this, fieldClickArgs);
 						}
 					}

@@ -16,7 +16,7 @@ namespace SaperCS
 		public Form1()
 		{
 			InitializeComponent();
-			game = new Game(this, this.Controls);
+			game = new Game(this, this.Controls, 20);
 		}
 
 		private void Form1_SizeChanged(object sender, EventArgs e)

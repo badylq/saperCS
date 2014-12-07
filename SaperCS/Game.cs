@@ -10,14 +10,16 @@ namespace SaperCS
 {
 	class Game
 	{
-		public Game (Form window, Control.ControlCollection controls){
+		public Game (Form window, Control.ControlCollection controls, int mines){
 			onMineExplode += new EventHandler(Mine_Explode);
 			onFieldClick += new EventHandler(Field_Click);
 			this.controls = controls;
 			this.window = window;
 			window.SizeChanged += new System.EventHandler(this.window_SizeChanged);
 			this.gameRandom = new Random();
-			this.PopulateFields(20);
+			this.mines = mines;
+			this.minesLeft = this.mines;
+			this.PopulateFields(this.mines);
 			this.neighborsToCheck = new List<Field> { };
 			this.isPlaying = true;
 			this.clock = 0;
@@ -38,9 +40,27 @@ namespace SaperCS
 			this.timePassed.Name = "timePassedText";
 			this.timePassed.Size = new Size(125, 50);
 			this.timePassed.Text = "Time: 000";
-			this.timePassed.Font = new System.Drawing.Font("Microsoft Sans Serif", 16, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.timePassed.Font = new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
 			this.timePassed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.controls.Add(this.timePassed);
+
+			this.minesLeftText = new Label();
+			this.minesLeftText.Location = new Point(window.Size.Width - 16 - 125, 0);
+			if (minesLeft > 9)
+				{
+					if (minesLeft > 99)
+					{
+						this.minesLeftText.Text = "Mines: " + minesLeft;
+					}
+					else
+						this.minesLeftText.Text = "Mines: 0" + minesLeft;
+				}
+				else
+					this.minesLeftText.Text = "Mines: 00" + minesLeft;
+			this.minesLeftText.Size = new Size(125, 50);
+			this.minesLeftText.Font = new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.minesLeftText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.controls.Add(this.minesLeftText);
 		}
 
 		private void PopulateFields(int numberOfMines)
@@ -92,6 +112,7 @@ namespace SaperCS
 		{
 			this.UpdateFieldsSize();
 			this.newGameButton.Location = new Point((window.Size.Width - 16) / 2 - 25, 0);
+			this.minesLeftText.Location = new Point(window.Size.Width - 16 - 125, 0);
 			window.Update();
 		}
 
@@ -245,8 +266,11 @@ namespace SaperCS
 					this.field[i, ii].Reset();
 				}
 			}
-			this.CreateMines(20);
+			this.minesLeft = this.mines;
+			this.CreateMines(this.mines);
 			this.isPlaying = true;
+			this.clock = 0;
+			this.timePassed.Text = "Time: 000";
 		}
 
 		public void Ticker_Tick()
@@ -281,6 +305,9 @@ namespace SaperCS
 		private bool isPlaying;
 		private int clock;
 		private Label timePassed;
+		private Label minesLeftText;
+		private int mines;
+		private int minesLeft;
 
 		#endregion
 

@@ -358,6 +358,8 @@ namespace SaperCS
 
 		private void GameWon()
 		{
+			this.minesLeft = 0;
+			this.SetMinesLeftText();
 			MessageBox.Show("You won in " + clock + "s.", "You won");
 			this.fieldsLeftUnclicked = field.Length;
 		}

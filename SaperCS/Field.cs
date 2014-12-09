@@ -40,6 +40,7 @@ namespace SaperCS
 						{
 							fieldButton.Text = "N";
 							this.fieldButton.BackColor = Color.DarkRed;
+							this.fieldButton.Font = new System.Drawing.Font("Wingdings", ((int)(fieldButton.Size.Height / 2.5)), System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
 							EventArgs args = null;
 							game.onMineExplode(this, args);
 						}
@@ -126,6 +127,7 @@ namespace SaperCS
 			this.wasClicked = false;
 			this.fieldButton.Text = "";
 			this.fieldButton.BackColor = SystemColors.Control;
+			this.checkState = 0;
 		}
 
 		public void UpdateSize(Size areaSize, Point p)

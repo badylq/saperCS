@@ -11,6 +11,7 @@ namespace SaperCS
 	class Game
 	{
 		public Game (Form window, Control.ControlCollection controls, int mines){
+			this.startedPlaying = false;
 			onMineExplode += new EventHandler(Mine_Explode);
 			onFieldClick += new EventHandler(Field_Click);
 			this.controls = controls;
@@ -133,6 +134,8 @@ namespace SaperCS
 		private void Field_Click(object sender, EventArgs e)
 		{
 			Point position;
+			if (this.startedPlaying == false)
+				this.startedPlaying = true;
 			if (e is FieldClickArgs)
 			{
 				FieldClickArgs fieldClickArgs = e as FieldClickArgs;
@@ -144,7 +147,7 @@ namespace SaperCS
 					this.SetMinesLeftText();
 				}
 				fieldsLeftUnclicked -= 1;
-				if(fieldsLeftUnclicked == 10)
+				if(fieldsLeftUnclicked == this.mines)
 				{
 					isPlaying = false;
 					this.GameWon();
@@ -255,7 +258,7 @@ namespace SaperCS
 			{
 				neighborsToCheck[0].Click(this.CheckForMines(neighborsToCheck[0].position, false));
 				fieldsLeftUnclicked -= 1;
-				if (fieldsLeftUnclicked == 10)
+				if (fieldsLeftUnclicked ==this.mines)
 				{
 					isPlaying = false;
 					this.GameWon();
@@ -284,11 +287,13 @@ namespace SaperCS
 			this.isPlaying = true;
 			this.clock = 0;
 			this.timePassed.Text = "Time: 000";
+			this.fieldsLeftUnclicked = field.Length;
+			this.startedPlaying = false;
 		}
 
 		public void Ticker_Tick()
 		{
-			if (isPlaying)
+			if (isPlaying && startedPlaying)
 			{
 				clock += 1;
 				if (clock > 9)
@@ -361,7 +366,6 @@ namespace SaperCS
 			this.minesLeft = 0;
 			this.SetMinesLeftText();
 			MessageBox.Show("You won in " + clock + "s.", "You won");
-			this.fieldsLeftUnclicked = field.Length;
 		}
 
 		#region Variables
@@ -380,6 +384,7 @@ namespace SaperCS
 		private int mines;
 		private int minesLeft;
 		private int fieldsLeftUnclicked;
+		private bool startedPlaying;
 
 		#endregion
 
